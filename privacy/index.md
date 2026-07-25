@@ -9,11 +9,11 @@ permalink: /privacy/
 このプライバシーポリシーは、CPA短答トレーナーのTestFlight betaに適用するための草案です。本アプリは公認会計士試験・短答式試験の学習支援を目的とした非公式アプリであり、試験実施機関または関係団体が提供、承認、監修する公式アプリではありません。
 2026-07-25時点で、backendログのIPアドレスとuser agentの取扱いを確認し、staging backendでは新規のCloud Run `run.googleapis.com/requests` logを`_Default` bucketへ保存しない設定と、ネットワーク識別情報を記録しないFastifyログへ変更しました。
 backendログに関する変更は公開ページにも反映済みです。
-AI Tutor監査ログ、日次利用カウンター、誤植報告、Google Forms回答の保持期間と削除方法は、この草案で決定しました。
-一方、Cloud Run Job、Cloud Scheduler、Google FormsのApps Scriptは外部環境へ配置したものの、DBの成功実行、通知、Schedulerの有効化、Google Formsの権限許可と日次triggerは未完了です。
-この保持期間改訂も公開ページへまだ反映していません。
+AI Tutor監査ログ、日次利用カウンター、誤植報告、Google Forms回答の保持期間と削除方法を決定し、stagingの定期処理へ反映しました。
+Cloud SQLの期限境界、失敗時のrollbackと再実行、Google Formsの期限超過回答削除を検証し、Cloud Schedulerと二つのApps Script日次triggerを有効にしています。
+この保持期間改訂も公開ページへ反映済みです。
 安全なアカウント削除依頼の受付手順も別途未完了です。
-これらを確認するまで、この草案を配布用の最終ポリシーとして扱いません。
+この受付手順を確認するまで、この草案をbackendへ接続する追加配布用の最終ポリシーとして扱いません。
 
 ## 収集する情報
 
@@ -111,10 +111,11 @@ Google Formsへ任意で送信されたbetaフィードバックは、フォー�
 対象データをCloud StorageまたはBigQueryへarchiveする処理と、対象recordを複製する外部sinkまたはexportはありません。
 Google Formsの連携Sheetもありません。
 
-Cloud SQLの日次処理を起動するCloud Run JobとCloud Schedulerは作成しましたが、DBのmigration、専用接続権限、成功実行、通知、手動再実行を未確認で、Schedulerは停止中です。
-Google FormsのApps Script本体とmanifestは配置しましたが、権限許可、削除、二つの日次trigger、失敗通知、手動再実行を未確認です。
-そのため、現時点では上表の期間を実運用上の最長保存期間として保証しません。
-[PR #149](https://github.com/shunki-235/CPA-Short-Answer-Exam/pull/149)以降にbackendへ接続するbuildを追加配布する前に、OPENの[#150](https://github.com/shunki-235/CPA-Short-Answer-Exam/issues/150)で期限境界、失敗検知、再実行を確認し、公開ページへ結果を反映します。
+Cloud SQLの日次処理は、専用接続権限だけを持つCloud Run JobをCloud Schedulerが毎日起動します。
+stagingでは期限境界、dry-run、本実行、同じ基準時刻での再実行、失敗時のrollback、復旧後の再実行を確認しました。
+Google Formsでは、権限を限定したApps Scriptが保持処理と26時間成功なし監視を毎日実行します。
+一時copyの非個人情報回答を使い、期限超過回答1件の削除、再実行0件、連携Sheet検出時の安全な停止と解除後の復旧を確認しました。
+確認手順と結果は[#150](https://github.com/shunki-235/CPA-Short-Answer-Exam/issues/150)で記録しています。
 
 ## 共有と販売
 
