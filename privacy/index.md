@@ -8,8 +8,11 @@ permalink: /privacy/
 
 このプライバシーポリシーは、CPA短答トレーナーのTestFlight betaに適用するための草案です。本アプリは公認会計士試験・短答式試験の学習支援を目的とした非公式アプリであり、試験実施機関または関係団体が提供、承認、監修する公式アプリではありません。
 2026-07-25時点で、backendログのIPアドレスとuser agentの取扱いを確認し、staging backendでは新規のCloud Run `run.googleapis.com/requests` logを`_Default` bucketへ保存しない設定と、ネットワーク識別情報を記録しないFastifyログへ変更しました。
-この内容は公開ページにも反映済みです。
-一方、backendとGoogle Formsの保持期間運用、安全なアカウント削除依頼の受付手順は完了していません。
+backendログに関する変更は公開ページにも反映済みです。
+AI Tutor監査ログ、日次利用カウンター、誤植報告、Google Forms回答の保持期間と削除方法は、この草案で決定しました。
+一方、Cloud Run Job、Cloud Scheduler、Google FormsのApps Scriptは外部環境へ配置したものの、DBの成功実行、通知、Schedulerの有効化、Google Formsの権限許可と日次triggerは未完了です。
+この保持期間改訂も公開ページへまだ反映していません。
+安全なアカウント削除依頼の受付手順も別途未完了です。
 これらを確認するまで、この草案を配布用の最終ポリシーとして扱いません。
 
 ## 収集する情報
@@ -66,13 +69,26 @@ LLM provider API key、database接続情報、backend secretはモバイルア�
 
 ## 保存期間
 
-現行backendは、AI Tutorの質問文、回答、引用情報、参照した問題ID、content version、監修状態、参照元ID、request status、provider、model、prompt template version、guardrail結果、latency、token usage、セキュリティ関連イベントを監査ログへ保存します。backendが参照コンテキストとして組み立てた問題本文、選択肢、解説、出典情報そのものは、独立した監査ログ項目として保存しません。
-質問文などを180日、集計metadataなどを13か月で削除または匿名化する方針は設計目標ですが、自動削除処理と確認済みの手動運用は未実装です。そのため、現時点ではこれらの最長保存期間を保証しません。
-削除処理、実行頻度、失敗時の監視、実行結果の証跡を用意するまで、初回TestFlight配布のblockerとします。この作業はOPENの[#150](https://github.com/shunki-235/CPA-Short-Answer-Exam/issues/150)で扱います。
+個人情報保護法は個人情報の保存期間を一律には定めていません。
+[個人情報保護委員会のFAQ](https://www.ppc.go.jp/all_faq_index/faq1-q5-2/)は、利用する必要がなくなった個人データを遅滞なく消去するよう努める必要があると説明しています。
+本betaでは、利用目的に必要な期間と自由入力を長く残すリスクを踏まえ、次の保持期間を定めます。
+
+| 情報 | 起算点 | 保持期限後の処理 |
+|---|---|---|
+| AI Tutorの質問文、回答、引用情報、参照した問題ID、content version、監修状態、参照元ID | 監査recordの作成日時 | 180日経過後の次の日次処理で、該当項目をNULLにする |
+| AI Tutorのrequest ID、backend内ユーザーIDとの紐付け、mode、request status、provider、model、prompt template version、guardrail結果、latency、token usage | 監査recordの作成日時 | 13か月経過後の次の日次処理で、監査record全体を削除する |
+| AI Tutorのユーザー・プラン別日次利用カウンター | UTCの利用日 | 31日経過後の次の日次処理で、record全体を削除する |
+| backendへ送信した誤植報告 | backendの受信日時 | 180日経過後の次の日次処理で、record全体を削除する |
+| Google Formsのbetaフィードバック | Google Formsが記録した送信日時 | 180日経過後の次の日次処理で、回答全体を削除する |
+
+AI Tutorの内容をNULLにした後も、費用監視、障害調査、guardrailと濫用傾向の確認に必要なmetadataは、record作成から13か月まで残ります。
+13か月を過ぎると、backend内ユーザーIDとの紐付けを含むrecord全体を削除します。
+backendが参照コンテキストとして組み立てた問題本文、選択肢、解説、出典情報そのものは、独立した監査ログ項目として保存しません。
+日次利用カウンターは当日のrate limit適用と直近の濫用調査にだけ使うため、31日とします。
+誤植報告は端末が記録した`reported_at`ではなく、オフライン送信の遅れや端末時刻の差に影響されないbackend側の`received_at`から数えます。
+期限と同時刻または同日付のrecordは、その次の日次処理で対象になります。
 
 端末内に保存される回答履歴、復習予定、未送信の誤植報告は、ユーザーがアプリを削除するか、後続機能で削除手段が追加されるまで端末内に残ります。
-`TYPO_REPORT_API_URL` 有効buildでbackendへ送信された誤植報告と、それに紐付くFirebase UID由来のbackend内ユーザーIDは、現行backendのDBへ保存されます。180日で削除または匿名化する方針は設計目標ですが、保持期間に基づく削除処理は未実装であり、現時点では最長保存期間を保証しません。この作業はOPENの[#150](https://github.com/shunki-235/CPA-Short-Answer-Exam/issues/150)で扱います。
-AI Tutorのユーザー・プラン別日次rate limitでは、Firebase UIDに紐づくbackend内ユーザーID、action、plan、UTC日付、request count、更新日時をCloud SQLへ保存します。保持期間に基づく削除処理は未実装であり、現時点では最長保存期間を保証しません。
 Firebase UIDは、AI Tutor認証とアカウント管理に必要な期間、Firebase Authenticationで保持します。
 実課金検証buildで作成したApple認証との連携情報は、購入権利の復旧とアカウント管理に必要な期間保持します。
 Firebase Authenticationは認証処理でIPアドレスとuser agentを取り扱います。Googleの説明では、IPアドレスを記録する場合は数週間保持し、アカウント削除開始後も認証データが稼働系とbackupから削除されるまで最大180日かかる場合があります。詳細は[Firebaseのプライバシー情報](https://firebase.google.com/support/privacy/)を確認してください。
@@ -87,7 +103,18 @@ Fastifyは標準request logを使わず、request ID、HTTP method、route templ
 変更後のFastify完了ログとerror logもcontainer logとして`_Default` bucketに保存されます。これらはCloud Run request logの除外対象ではなく、既定の30日保持期間が適用されます。
 確認内容、検索条件、rollback手順は、完了済みの[#151](https://github.com/shunki-235/CPA-Short-Answer-Exam/issues/151)で記録しています。
 
-Google Formsへ任意で送信されたbetaフィードバックは、開発関係者が閲覧し、フォームの提供・保存に必要な範囲でGoogleが取り扱います。180日で削除または匿名化する方針は設計目標ですが、確認済みの削除運用はありません。運用を用意するまで最長保存期間を保証せず、初回TestFlight配布のblockerとします。この作業はOPENの[#150](https://github.com/shunki-235/CPA-Short-Answer-Exam/issues/150)で扱います。
+Google Formsへ任意で送信されたbetaフィードバックは、フォームowner 1名が閲覧し、フォームの提供と保存に必要な範囲でGoogleが取り扱います。
+2026-07-25時点ではGoogle Formsのresponse storeだけに保存し、Google Sheetsとは連携していません。
+同日時点の回答は2026-07-12送信の1件で、180日の保持期間内です。
+
+2026-07-25時点では、Cloud SQLの自動backupとPoint-in-time recoveryは無効です。
+対象データをCloud StorageまたはBigQueryへarchiveする処理と、対象recordを複製する外部sinkまたはexportはありません。
+Google Formsの連携Sheetもありません。
+
+Cloud SQLの日次処理を起動するCloud Run JobとCloud Schedulerは作成しましたが、DBのmigration、専用接続権限、成功実行、通知、手動再実行を未確認で、Schedulerは停止中です。
+Google FormsのApps Script本体とmanifestは配置しましたが、権限許可、削除、二つの日次trigger、失敗通知、手動再実行を未確認です。
+そのため、現時点では上表の期間を実運用上の最長保存期間として保証しません。
+[PR #149](https://github.com/shunki-235/CPA-Short-Answer-Exam/pull/149)以降にbackendへ接続するbuildを追加配布する前に、OPENの[#150](https://github.com/shunki-235/CPA-Short-Answer-Exam/issues/150)で期限境界、失敗検知、再実行を確認し、公開ページへ結果を反映します。
 
 ## 共有と販売
 
@@ -109,5 +136,6 @@ https://shunki-235.github.io/cpa-short-answer-support/
 
 公開Issueには、Firebase UIDを含む個人情報や機微な情報を書き込まないでください。
 現在の公開サポートページには公開GitHub Issue以外の受付経路がなく、Firebaseアカウントを安全に特定して削除依頼を受け付ける手順も未整備です。そのため、公開IssueからFirebaseアカウントの削除を依頼することはできません。
-初回TestFlight配布前に、非公開の削除依頼受付、対象アカウントの確認、Firebaseとbackendの関連データを削除する手順、完了連絡の方法を用意します。このbeta向け運用はOPENの[#152](https://github.com/shunki-235/CPA-Short-Answer-Exam/issues/152)で扱います。
+[PR #149](https://github.com/shunki-235/CPA-Short-Answer-Exam/pull/149)以降にbackendへ接続するbuildを追加配布する前に、非公開の削除依頼受付、対象アカウントの確認、Firebaseとbackendの関連データを削除する手順、完了連絡の方法を用意します。
+このbeta向け運用はOPENの[#152](https://github.com/shunki-235/CPA-Short-Answer-Exam/issues/152)で扱い、[#150](https://github.com/shunki-235/CPA-Short-Answer-Exam/issues/150)の定期保持処理とは別に確認します。
 一般App Store公開前のアプリ内削除開始導線、関連データ削除、Apple連携済みの場合のtoken失効処理は、OPENの[#51](https://github.com/shunki-235/CPA-Short-Answer-Exam/issues/51)で扱います。
