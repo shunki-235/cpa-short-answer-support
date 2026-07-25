@@ -7,7 +7,7 @@ permalink: /privacy/
 最終更新日: 2026-07-25
 
 このプライバシーポリシーは、CPA短答トレーナーのTestFlight betaに適用するための草案です。本アプリは公認会計士試験・短答式試験の学習支援を目的とした非公式アプリであり、試験実施機関または関係団体が提供、承認、監修する公式アプリではありません。
-2026-07-25時点で、backendログのIPアドレスとuser agentの取扱いを確認し、staging backendでは新規のCloud Run request logを長期保存しない設定と、ネットワーク識別情報を記録しないFastifyログへ変更しました。
+2026-07-25時点で、backendログのIPアドレスとuser agentの取扱いを確認し、staging backendでは新規のCloud Run `run.googleapis.com/requests` logを`_Default` bucketへ保存しない設定と、ネットワーク識別情報を記録しないFastifyログへ変更しました。
 この内容は公開ページにも反映済みです。
 一方、backendとGoogle Formsの保持期間運用、安全なアカウント削除依頼の受付手順は完了していません。
 これらを確認するまで、この草案を配布用の最終ポリシーとして扱いません。
@@ -22,7 +22,7 @@ permalink: /privacy/
 |---|---|---|
 | Firebase UID | Firebase、backend | 匿名ユーザーまたはApple連携済みユーザーの識別、AI Tutorの認証、rate limit、濫用防止。`TYPO_REPORT_API_URL` 有効buildでは誤植報告の送信者識別にも使う |
 | Apple Accountの認証識別子 | Apple、Firebase | 実課金検証buildで、購入前の本人確認と再インストール後のFirebase UID、購入権利の復旧に使う |
-| IPアドレス、user agent | Firebase Authentication。IPアドレスはbackendのin-memory IP rate limiterでも処理する。Cloud Runはrequest log生成時にIPアドレスとuser agentを処理する | 認証要求の処理、不正利用防止、セキュリティ保護。backendのIP rate limiterはIPアドレスをDBへ保存しない。staging backendのCloud Run request logはログbucketの保存対象から除外し、Fastifyはネットワーク識別情報をapplication logへ記録しない |
+| IPアドレス、user agent | Firebase Authentication。IPアドレスはbackendのin-memory IP rate limiterでも処理する。Cloud Runはrequest log生成時にIPアドレスとuser agentを処理する | 認証要求の処理、不正利用防止、セキュリティ保護。backendのIP rate limiterはIPアドレスをDBへ保存しない。staging backendのCloud Run `run.googleapis.com/requests` logは`_Default` bucketの保存対象から除外し、Fastifyはネットワーク識別情報をapplication logへ記録しない |
 | AI Tutorの利用回数と利用プラン | backendのCloud SQL | Firebase UIDに紐づくbackend内ユーザーID、action、plan、UTC日付、request count、更新日時を使い、ユーザー・プラン別の日次rate limitを適用する |
 | AI Tutorへの質問文 | backend、LLM provider API | 回答生成、品質確認、問い合わせ対応 |
 | AI Tutorの回答、引用情報、参照した問題ID、content version、監修状態、参照元ID | backend | 監査、品質改善、誤回答調査 |
@@ -78,10 +78,13 @@ Firebase UIDは、AI Tutor認証とアカウント管理に必要な期間、Fir
 Firebase Authenticationは認証処理でIPアドレスとuser agentを取り扱います。Googleの説明では、IPアドレスを記録する場合は数週間保持し、アカウント削除開始後も認証データが稼働系とbackupから削除されるまで最大180日かかる場合があります。詳細は[Firebaseのプライバシー情報](https://firebase.google.com/support/privacy/)を確認してください。
 backendのin-memory rate limiterはIPアドレスを既定60秒のwindowで保持し、DBへ保存しません。
 2026-07-25の確認では、Cloud Runが自動生成したrequest logにIPアドレスとuser agentがあり、Fastifyの標準request logにも接続元IPアドレスがありました。
-staging backendのCloud Run request logは、同日からログbucketの保存対象から除外しています。
+staging backendのCloud Run `run.googleapis.com/requests` logは、同日から`_Default` bucketの保存対象から除外しています。
 Fastifyは標準request logを使わず、request ID、HTTP method、route template、status code、処理時間だけを記録する構成へ変更し、revision `ai-tutor-api-staging-2fb798d`へ反映しました。
 ダミーのIPアドレス、user agent、Authorization、query文字列を付けたstaging requestを使い、これらがFastifyの完了ログに保存されず、Cloud Run request logも`_Default` bucketへ保存されないことを確認しました。
-除外前のCloud Run request logとFastify logは、既定の30日保持期間に従って残ります。
+この確認は`_Default` bucketへの保存を対象とし、他のユーザー定義bucketや転送先を網羅したものではありません。2026-07-25時点では、追加のexport sinkがないことも確認しました。
+除外追加前のCloud Run `run.googleapis.com/requests` logは、`_Default` bucketの既定の30日保持期間に従って残ります。
+変更前のFastify標準request logはcontainer logとして`_Default` bucketに保存され、同じ30日保持期間に従って残ります。
+変更後のFastify完了ログとerror logもcontainer logとして`_Default` bucketに保存されます。これらはCloud Run request logの除外対象ではなく、既定の30日保持期間が適用されます。
 確認内容、検索条件、rollback手順は、完了済みの[#151](https://github.com/shunki-235/CPA-Short-Answer-Exam/issues/151)で記録しています。
 
 Google Formsへ任意で送信されたbetaフィードバックは、開発関係者が閲覧し、フォームの提供・保存に必要な範囲でGoogleが取り扱います。180日で削除または匿名化する方針は設計目標ですが、確認済みの削除運用はありません。運用を用意するまで最長保存期間を保証せず、初回TestFlight配布のblockerとします。この作業はOPENの[#150](https://github.com/shunki-235/CPA-Short-Answer-Exam/issues/150)で扱います。
