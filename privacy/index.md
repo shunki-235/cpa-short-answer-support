@@ -4,16 +4,23 @@ title: CPA短答トレーナー TestFlightプライバシーポリシー
 permalink: /privacy/
 ---
 
-最終更新日: 2026-07-25
+最終更新日: 2026-07-29
 
-このプライバシーポリシーは、CPA短答トレーナーのTestFlight betaに適用するための草案です。本アプリは公認会計士試験・短答式試験の学習支援を目的とした非公式アプリであり、試験実施機関または関係団体が提供、承認、監修する公式アプリではありません。
+このプライバシーポリシーは、CPA短答トレーナーのTestFlight betaに適用します。本アプリは公認会計士試験・短答式試験の学習支援を目的とした非公式アプリであり、試験実施機関または関係団体が提供、承認、監修する公式アプリではありません。
 2026-07-25時点で、backendログのIPアドレスとuser agentの取扱いを確認し、staging backendでは新規のCloud Run `run.googleapis.com/requests` logを`_Default` bucketへ保存しない設定と、ネットワーク識別情報を記録しないFastifyログへ変更しました。
 backendログに関する変更は公開ページにも反映済みです。
 AI Tutor監査ログ、日次利用カウンター、誤植報告、Google Forms回答の保持期間と削除方法を決定し、stagingの定期処理へ反映しました。
 Cloud SQLの期限境界、失敗時のrollbackと再実行、Google Formsの期限超過回答削除を検証し、Cloud Schedulerと二つのApps Script日次triggerを有効にしています。
 この保持期間改訂も公開ページへ反映済みです。
-安全なアカウント削除依頼の受付手順も別途未完了です。
-この受付手順を確認するまで、この草案をbackendへ接続する追加配布用の最終ポリシーとして扱いません。
+TestFlight beta専用のアカウント削除依頼フォームを作成し、iOS Simulator上のアプリから確認コードを発行して実フォームを開き、検証用の依頼1件を送信できることを確認しました。
+同フォームの保持処理に使うApps ScriptへOAuthを許可し、対象0件、削除0件、失敗0件のpreviewと本実行、安全な実行履歴、26時間の成功鮮度監視、二つの日次triggerを確認しました。
+一時copyを使い、期限超過回答1件の削除、再実行0件、連携Sheet検出時の安全な停止と回答保持、連携解除後の削除を確認しました。
+実フォームの依頼は削除operatorで処理し、Firebase利用者1件とbackendの`users` 1件を削除して`completed`となること、完了メールの送受信、通知済み記録を確認しました。
+未解決alertは、専用fixture 3件中2件が保持Jobの元ログへ記録され、log-based metricに値1の`INT64` pointが作成され、incidentが`OPEN`となることを確認しました。
+Gmailへのalertメール受信、fixture cleanup、後続inspectの未解決0件、最終保持Jobの未解決0件と失敗0件まで確認しました。
+0件ログ後の5分のalignment window終了後にincident詳細を再読み込みし、alertが自動close済みであることを確認しました。
+incidentはすでにclosedであったため、手動のpermanent closeは実施していません。
+削除受付の運用確認と公開ページへの反映が完了したため、このポリシーをbackendへ接続する追加配布用の最終ポリシーとして扱います。
 
 ## 収集する情報
 
@@ -33,12 +40,18 @@ Cloud SQLの期限境界、失敗時のrollbackと再実行、Google Formsの期
 | 回答履歴、復習予定、自信度、理由タグ | 端末内 | 復習キュー表示 |
 | 誤植報告 | 端末内、`TYPO_REPORT_API_URL` 有効buildではstaging backend | beta中の問題品質確認。対象箇所、対象テキスト、ユーザーコメントを扱う |
 | betaフィードバック | Google Forms | 任意で入力した、初回体験、演習、履歴入力、復習、AI Tutor、Paywall、誤植報告、出典・監修表示への意見を扱う |
+| TestFlight betaのアカウント削除フォーム回答 | Google Forms | アプリが発行した確認コード、完了連絡先メールアドレス、アカウント種別、削除への同意を使い、削除対象の確認、削除作業、完了連絡を行う |
+| TestFlight betaのアカウント削除処理台帳 | backend | 確認コードのhash、Firebase UIDのhash、処理状態、処理時刻、完了連絡の記録時刻、安全な固定failure codeを使い、削除の進行、失敗からの再実行、完了連絡の記録を行う。確認コードそのものと完了連絡先メールアドレスは保存しない |
+| TestFlight betaのアカウント削除完了メール | 運用者のメールproviderと送信済みメールbox | フォームへ入力された完了連絡先メールアドレスへ、削除完了、端末内データ、backupの削除期間を連絡する |
 
 Sign in with Appleでは氏名とメールアドレスのscopeを要求せず、アプリ独自のDBへ保存しません。
-アプリには、氏名、メールアドレス、電話番号、住所、位置情報、連絡先、写真、カレンダー、決済情報の専用入力欄を設けず、これらを初回TestFlightで意図的に収集しません。
+アプリ本体には、氏名、メールアドレス、電話番号、住所、位置情報、連絡先、写真、カレンダー、決済情報の専用入力欄を設けず、これらを初回TestFlightで意図的に収集しません。
+ただし、アカウント削除依頼を送信する場合だけ、アプリ外の専用フォームで完了連絡先メールアドレスを収集します。
 ただし、AI Tutorの質問文、誤植報告、betaフィードバックの自由入力欄には、入力した内容がそのまま含まれます。氏名、Firebase UID、メールアドレス、問題文などの個人情報や機微な情報を入力しないでください。
 現行backendは、AI Tutorの質問文とbackendへ送信した誤植報告を自動でPII検出またはredactionしません。
 Google Formsではメールアドレスを自動収集しません。
+アカウント削除依頼フォームでは、完了連絡先メールアドレスを必須の専用設問として入力してもらいます。
+同フォームへFirebase UID、ID token、Apple Account情報、パスワードを入力しないでください。
 実課金、購入復元、Sign in with Appleの操作導線は初回TestFlightには含みません。
 
 ## 利用目的
@@ -51,6 +64,7 @@ Google Formsではメールアドレスを自動収集しません。
 - 不具合、エラー、根拠不足回答、ガードレール違反を調査するため
 - betaテスターからの問い合わせ、誤植報告に対応するため
 - 問題演習、復習キュー、AI Tutor導線の品質を改善するため
+- アカウントの削除対象を確認し、削除処理を行い、完了を連絡するため
 
 ## 第三者サービス
 
@@ -62,7 +76,8 @@ TestFlight betaでは、以下の第三者サービスを利用します。Sign 
 | Sign in with Apple | Apple認証を有効にした実課金検証buildでの購入前認証と購入者アカウントの復旧 |
 | Google Cloud Run / Cloud SQL | backend API、監査ログ、AI Tutorのユーザー・プラン別日次rate limit、`TYPO_REPORT_API_URL` 有効buildの誤植報告保存 |
 | LLM provider API | AI Tutor回答生成。質問文、学習状態、問題本文、正誤を含む選択肢、解説、出典情報を送信する |
-| Google Forms | betaフィードバックの受付・保存 |
+| Google Forms | betaフィードバックとTestFlight betaのアカウント削除依頼の受付・保存 |
+| 運用者のメールprovider（Gmail） | TestFlight betaのアカウント削除完了メールの送信と保存。完了連絡先メールアドレスと、識別情報を含まない定型の完了内容を扱う |
 | TestFlight / App Store Connect | beta配布 |
 
 LLM provider API key、database接続情報、backend secretはモバイルアプリに含めません。
@@ -80,6 +95,10 @@ LLM provider API key、database接続情報、backend secretはモバイルア�
 | AI Tutorのユーザー・プラン別日次利用カウンター | UTCの利用日 | 31日経過後の次の日次処理で、record全体を削除する |
 | backendへ送信した誤植報告 | backendの受信日時 | 180日経過後の次の日次処理で、record全体を削除する |
 | Google Formsのbetaフィードバック | Google Formsが記録した送信日時 | 180日経過後の次の日次処理で、回答全体を削除する |
+| Google Formsのアカウント削除依頼 | Google Formsが記録した送信日時 | 180日経過後の次の日次処理で、回答全体を削除する |
+| backendのアカウント削除処理台帳 | 未開始の場合は作成日時、完了した場合は完了連絡の記録日時 | 181日経過後の次の日次処理で、record全体を削除する。開始後に`processing`または`failed`となった未完了のrecordは、failure codeの有無にかかわらず復旧が完了するまで保持する |
+| Firebase UIDのhashによる削除tombstone | 削除完了日時 | 181日経過後の次の日次処理で、record全体を削除する。削除が未完了の場合は、復旧が完了するまで保持する |
+| 送信済みのアカウント削除完了メール | メール送信日時 | 運用者の送信済みメールboxでは180日経過後に削除する。受信者側とメールproviderのbackupは、それぞれの保持・削除手順に従う |
 
 AI Tutorの内容をNULLにした後も、費用監視、障害調査、guardrailと濫用傾向の確認に必要なmetadataは、record作成から13か月まで残ります。
 13か月を過ぎると、backend内ユーザーIDとの紐付けを含むrecord全体を削除します。
@@ -107,6 +126,12 @@ Google Formsへ任意で送信されたbetaフィードバックは、フォー�
 2026-07-25時点ではGoogle Formsのresponse storeだけに保存し、Google Sheetsとは連携していません。
 同日時点の回答は2026-07-12送信の1件で、180日の保持期間内です。
 
+TestFlight betaのアカウント削除依頼も、別のGoogle Formでフォームowner 1名が閲覧します。
+2026-07-29時点で、リンクを知る人がGoogleログインなしで回答でき、メールアドレスの自動収集、回答先のGoogle Sheets、回答コピー、送信後の編集は設定していません。
+同日時点の検証用回答1件を削除operatorで処理し、完了メールの送受信と通知済み記録を確認しました。
+backendには確認コードそのものと完了連絡先メールアドレスを保存せず、確認コードのhash、Firebase UIDのhash、処理状態、処理時刻、完了連絡の記録時刻、安全な固定failure codeだけを処理台帳へ保存します。
+完了メールには、確認コード、Firebase UID、backend内ユーザーID、Apple Account情報を含めません。
+
 2026-07-25時点では、Cloud SQLの自動backupとPoint-in-time recoveryは無効です。
 対象データをCloud StorageまたはBigQueryへarchiveする処理と、対象recordを複製する外部sinkまたはexportはありません。
 Google Formsの連携Sheetもありません。
@@ -116,6 +141,10 @@ stagingでは期限境界、dry-run、本実行、同じ基準時刻での再実
 Google Formsでは、権限を限定したApps Scriptが保持処理と26時間成功なし監視を毎日実行します。
 一時copyの非個人情報回答を使い、期限超過回答1件の削除、再実行0件、連携Sheet検出時の安全な停止と解除後の復旧を確認しました。
 確認手順と結果は[#150](https://github.com/shunki-235/CPA-Short-Answer-Exam/issues/150)で記録しています。
+
+アカウント削除依頼フォーム用のApps Scriptは、実フォームでOAuth許可、preview、本実行、安全な実行履歴、成功鮮度監視、二つの日次triggerまで確認済みです。
+一時copyの非個人情報回答を使い、期限超過回答1件の削除、再実行0件、連携Sheet検出時の安全な停止と回答保持、連携解除後の削除を確認しました。
+検証後は一時フォームとSheetをGoogle Driveのゴミ箱へ移動しました。
 
 ## 共有と販売
 
@@ -128,6 +157,7 @@ Apple認証を有効にした実課金検証buildで認証をキャンセルし�
 AI Tutorを利用した場合、質問文と関連する監査ログがbackendに保存されます。
 誤植報告は任意で、`TYPO_REPORT_API_URL` 有効buildでは送信した報告内容がstaging backendに保存されます。
 betaフィードバックも任意で、送信時は外部のGoogle Formsが開きます。
+Firebaseアカウントとbackend上の関連データの削除を希望する場合は、この導線を設定した対象buildの配布後、アプリの「TestFlight アカウント削除」から確認コードを発行し、表示された専用フォームへ送信できます。
 
 ## 問い合わせ
 
@@ -136,7 +166,8 @@ TestFlight betaに関する一般的な問い合わせと不具合報告は、�
 https://shunki-235.github.io/cpa-short-answer-support/
 
 公開Issueには、Firebase UIDを含む個人情報や機微な情報を書き込まないでください。
-現在の公開サポートページには公開GitHub Issue以外の受付経路がなく、Firebaseアカウントを安全に特定して削除依頼を受け付ける手順も未整備です。そのため、公開IssueからFirebaseアカウントの削除を依頼することはできません。
-[PR #149](https://github.com/shunki-235/CPA-Short-Answer-Exam/pull/149)以降にbackendへ接続するbuildを追加配布する前に、非公開の削除依頼受付、対象アカウントの確認、Firebaseとbackendの関連データを削除する手順、完了連絡の方法を用意します。
-このbeta向け運用はOPENの[#152](https://github.com/shunki-235/CPA-Short-Answer-Exam/issues/152)で扱い、[#150](https://github.com/shunki-235/CPA-Short-Answer-Exam/issues/150)の定期保持処理とは別に確認します。
+公開IssueではFirebaseアカウントの削除依頼を受け付けません。
+TestFlight beta参加者には、対象buildのアプリ内からだけ非公開の削除依頼フォームを案内します。
+2026-07-29に、検証済みの削除受付と運用手順を[公開サポートPR #8](https://github.com/shunki-235/cpa-short-answer-support/pull/8)で公開ページへ同期しました。
+このbeta向け運用は[#152](https://github.com/shunki-235/CPA-Short-Answer-Exam/issues/152)で確認し、[#150](https://github.com/shunki-235/CPA-Short-Answer-Exam/issues/150)の定期保持処理とは別に運用します。
 一般App Store公開前のアプリ内削除開始導線、関連データ削除、Apple連携済みの場合のtoken失効処理は、OPENの[#51](https://github.com/shunki-235/CPA-Short-Answer-Exam/issues/51)で扱います。
