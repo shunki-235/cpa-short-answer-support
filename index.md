@@ -15,6 +15,16 @@ permalink: /
 
 公開Issueには、氏名、メールアドレス、Firebase anonymous UID、質問内容などの個人情報や機微な情報を書き込まないでください。
 
+## TestFlight betaのアカウント削除
+
+Firebaseアカウントとbackend上の関連データの削除を希望するTestFlight beta参加者は、この導線を設定した対象buildの配布後、アプリの「TestFlight アカウント削除」から表示される非公開フォームを利用してください。
+
+公開Issueではアカウント削除依頼を受け付けません。
+公開Issueには、Firebase UID、ID token、Apple Account情報、メールアドレスなどの識別情報や認証情報を書き込まないでください。
+
+削除作業、完了メール、未解決状態の通知、フォーム回答の保持処理に関する一時コピー検証、この導線を設定したTestFlight buildの追加配布は未完了です。
+これらの確認が終わるまで、backendへ接続する追加配布用の最終運用とは扱いません。
+
 ## プライバシー
 
 - [プライバシーポリシー](./privacy/)
