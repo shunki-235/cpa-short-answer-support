@@ -12,7 +12,7 @@ backendログに関する変更は公開ページにも反映済みです。
 AI Tutor監査ログ、日次利用カウンター、誤植報告、Google Forms回答の保持期間と削除方法を決定し、stagingの定期処理へ反映しました。
 Cloud SQLの期限境界、失敗時のrollbackと再実行、Google Formsの期限超過回答削除を検証し、Cloud Schedulerと二つのApps Script日次triggerを有効にしています。
 この保持期間改訂も公開ページへ反映済みです。
-TestFlight beta専用のアカウント削除依頼フォームを作成し、アプリから確認コードを発行して実フォームを開き、検証用の依頼1件を送信できることを確認しました。
+TestFlight beta専用のアカウント削除依頼フォームを作成し、iOS Simulator上のアプリから確認コードを発行して実フォームを開き、検証用の依頼1件を送信できることを確認しました。
 同フォームの保持処理に使うApps ScriptへOAuthを許可し、対象0件、削除0件、失敗0件のpreviewと本実行、安全な実行履歴、26時間の成功鮮度監視、二つの日次triggerを確認しました。
 一時copyを使う期限超過回答の削除、再実行、連携Sheet検出時の停止と復旧は未完了です。
 削除operatorによる同依頼の処理、完了連絡、未解決alertの実着信も未確認です。
@@ -36,7 +36,9 @@ TestFlight beta専用のアカウント削除依頼フォームを作成し、�
 | 回答履歴、復習予定、自信度、理由タグ | 端末内 | 復習キュー表示 |
 | 誤植報告 | 端末内、`TYPO_REPORT_API_URL` 有効buildではstaging backend | beta中の問題品質確認。対象箇所、対象テキスト、ユーザーコメントを扱う |
 | betaフィードバック | Google Forms | 任意で入力した、初回体験、演習、履歴入力、復習、AI Tutor、Paywall、誤植報告、出典・監修表示への意見を扱う |
-| TestFlight betaのアカウント削除依頼 | Google Forms、backend | アプリが発行した確認コード、完了連絡先メールアドレス、アカウント種別、削除への同意を使い、削除対象の確認、削除作業、完了連絡を行う |
+| TestFlight betaのアカウント削除フォーム回答 | Google Forms | アプリが発行した確認コード、完了連絡先メールアドレス、アカウント種別、削除への同意を使い、削除対象の確認、削除作業、完了連絡を行う |
+| TestFlight betaのアカウント削除処理台帳 | backend | 確認コードのhash、Firebase UIDのhash、処理状態、処理時刻、安全な固定failure codeを使い、削除の進行、失敗からの再実行、完了連絡の記録を行う。確認コードそのものと完了連絡先メールアドレスは保存しない |
+| TestFlight betaのアカウント削除完了メール | 運用者のメールproviderと送信済みメールbox | フォームへ入力された完了連絡先メールアドレスへ、削除完了、端末内データ、backupの削除期間を連絡する |
 
 Sign in with Appleでは氏名とメールアドレスのscopeを要求せず、アプリ独自のDBへ保存しません。
 アプリには、氏名、メールアドレス、電話番号、住所、位置情報、連絡先、写真、カレンダー、決済情報の専用入力欄を設けず、これらを初回TestFlightで意図的に収集しません。
@@ -57,6 +59,7 @@ Google Formsではメールアドレスを自動収集しません。
 - 不具合、エラー、根拠不足回答、ガードレール違反を調査するため
 - betaテスターからの問い合わせ、誤植報告に対応するため
 - 問題演習、復習キュー、AI Tutor導線の品質を改善するため
+- アカウントの削除対象を確認し、削除処理を行い、完了を連絡するため
 
 ## 第三者サービス
 
@@ -69,6 +72,7 @@ TestFlight betaでは、以下の第三者サービスを利用します。Sign 
 | Google Cloud Run / Cloud SQL | backend API、監査ログ、AI Tutorのユーザー・プラン別日次rate limit、`TYPO_REPORT_API_URL` 有効buildの誤植報告保存 |
 | LLM provider API | AI Tutor回答生成。質問文、学習状態、問題本文、正誤を含む選択肢、解説、出典情報を送信する |
 | Google Forms | betaフィードバックとTestFlight betaのアカウント削除依頼の受付・保存 |
+| 運用者のメールprovider（Gmail） | TestFlight betaのアカウント削除完了メールの送信と保存。完了連絡先メールアドレスと、識別情報を含まない定型の完了内容を扱う |
 | TestFlight / App Store Connect | beta配布 |
 
 LLM provider API key、database接続情報、backend secretはモバイルアプリに含めません。
@@ -87,6 +91,9 @@ LLM provider API key、database接続情報、backend secretはモバイルア�
 | backendへ送信した誤植報告 | backendの受信日時 | 180日経過後の次の日次処理で、record全体を削除する |
 | Google Formsのbetaフィードバック | Google Formsが記録した送信日時 | 180日経過後の次の日次処理で、回答全体を削除する |
 | Google Formsのアカウント削除依頼 | Google Formsが記録した送信日時 | 180日経過後の次の日次処理で、回答全体を削除する |
+| backendのアカウント削除処理台帳 | 未開始の場合は作成日時、完了した場合は完了連絡の記録日時 | 181日経過後の次の日次処理で、record全体を削除する。開始後に未完了のrecordは、復旧が完了するまで保持する |
+| Firebase UIDのhashによる削除tombstone | 削除完了日時 | 181日経過後の次の日次処理で、record全体を削除する。削除が未完了の場合は、復旧が完了するまで保持する |
+| 送信済みのアカウント削除完了メール | メール送信日時 | 運用者の送信済みメールboxでは180日経過後に削除する。受信者側とメールproviderのbackupは、それぞれの保持・削除手順に従う |
 
 AI Tutorの内容をNULLにした後も、費用監視、障害調査、guardrailと濫用傾向の確認に必要なmetadataは、record作成から13か月まで残ります。
 13か月を過ぎると、backend内ユーザーIDとの紐付けを含むrecord全体を削除します。
@@ -117,6 +124,8 @@ Google Formsへ任意で送信されたbetaフィードバックは、フォー�
 TestFlight betaのアカウント削除依頼も、別のGoogle Formでフォームowner 1名が閲覧します。
 2026-07-29時点で、リンクを知る人がGoogleログインなしで回答でき、メールアドレスの自動収集、回答先のGoogle Sheets、回答コピー、送信後の編集は設定していません。
 同日時点の検証用回答は1件です。
+backendには確認コードそのものと完了連絡先メールアドレスを保存せず、確認コードのhash、Firebase UIDのhash、処理状態、処理時刻、安全な固定failure codeだけを処理台帳へ保存します。
+完了メールには、確認コード、Firebase UID、backend内ユーザーID、Apple Account情報を含めません。
 
 2026-07-25時点では、Cloud SQLの自動backupとPoint-in-time recoveryは無効です。
 対象データをCloud StorageまたはBigQueryへarchiveする処理と、対象recordを複製する外部sinkまたはexportはありません。
@@ -142,7 +151,7 @@ Apple認証を有効にした実課金検証buildで認証をキャンセルし�
 AI Tutorを利用した場合、質問文と関連する監査ログがbackendに保存されます。
 誤植報告は任意で、`TYPO_REPORT_API_URL` 有効buildでは送信した報告内容がstaging backendに保存されます。
 betaフィードバックも任意で、送信時は外部のGoogle Formsが開きます。
-Firebaseアカウントとbackend上の関連データの削除を希望する場合は、アプリの「TestFlight アカウント削除」から確認コードを発行し、表示された専用フォームへ送信できます。
+Firebaseアカウントとbackend上の関連データの削除を希望する場合は、この導線を設定した対象buildの配布後、アプリの「TestFlight アカウント削除」から確認コードを発行し、表示された専用フォームへ送信できます。
 
 ## 問い合わせ
 
