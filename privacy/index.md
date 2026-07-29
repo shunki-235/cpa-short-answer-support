@@ -6,7 +6,7 @@ permalink: /privacy/
 
 最終更新日: 2026-07-29
 
-このプライバシーポリシーは、CPA短答トレーナーのTestFlight betaに適用するための草案です。本アプリは公認会計士試験・短答式試験の学習支援を目的とした非公式アプリであり、試験実施機関または関係団体が提供、承認、監修する公式アプリではありません。
+このプライバシーポリシーは、CPA短答トレーナーのTestFlight betaに適用します。本アプリは公認会計士試験・短答式試験の学習支援を目的とした非公式アプリであり、試験実施機関または関係団体が提供、承認、監修する公式アプリではありません。
 2026-07-25時点で、backendログのIPアドレスとuser agentの取扱いを確認し、staging backendでは新規のCloud Run `run.googleapis.com/requests` logを`_Default` bucketへ保存しない設定と、ネットワーク識別情報を記録しないFastifyログへ変更しました。
 backendログに関する変更は公開ページにも反映済みです。
 AI Tutor監査ログ、日次利用カウンター、誤植報告、Google Forms回答の保持期間と削除方法を決定し、stagingの定期処理へ反映しました。
@@ -14,9 +14,13 @@ Cloud SQLの期限境界、失敗時のrollbackと再実行、Google Formsの期
 この保持期間改訂も公開ページへ反映済みです。
 TestFlight beta専用のアカウント削除依頼フォームを作成し、iOS Simulator上のアプリから確認コードを発行して実フォームを開き、検証用の依頼1件を送信できることを確認しました。
 同フォームの保持処理に使うApps ScriptへOAuthを許可し、対象0件、削除0件、失敗0件のpreviewと本実行、安全な実行履歴、26時間の成功鮮度監視、二つの日次triggerを確認しました。
-一時copyを使う期限超過回答の削除、再実行、連携Sheet検出時の停止と復旧は未完了です。
-削除operatorによる同依頼の処理、完了連絡、未解決alertの実着信も未確認です。
-これらの運用確認と公開ページへの反映を終えるまで、この草案をbackendへ接続する追加配布用の最終ポリシーとして扱いません。
+一時copyを使い、期限超過回答1件の削除、再実行0件、連携Sheet検出時の安全な停止と回答保持、連携解除後の削除を確認しました。
+実フォームの依頼は削除operatorで処理し、Firebase利用者1件とbackendの`users` 1件を削除して`completed`となること、完了メールの送受信、通知済み記録を確認しました。
+未解決alertは、専用fixture 3件中2件が保持Jobの元ログへ記録され、log-based metricに値1の`INT64` pointが作成され、incidentが`OPEN`となることを確認しました。
+Gmailへのalertメール受信、fixture cleanup、後続inspectの未解決0件、最終保持Jobの未解決0件と失敗0件まで確認しました。
+0件ログ後の5分のalignment window終了後にincident詳細を再読み込みし、alertが自動close済みであることを確認しました。
+incidentはすでにclosedであったため、手動のpermanent closeは実施していません。
+削除受付の運用確認と公開ページへの反映が完了したため、このポリシーをbackendへ接続する追加配布用の最終ポリシーとして扱います。
 
 ## 収集する情報
 
@@ -123,7 +127,7 @@ Google Formsへ任意で送信されたbetaフィードバックは、フォー�
 
 TestFlight betaのアカウント削除依頼も、別のGoogle Formでフォームowner 1名が閲覧します。
 2026-07-29時点で、リンクを知る人がGoogleログインなしで回答でき、メールアドレスの自動収集、回答先のGoogle Sheets、回答コピー、送信後の編集は設定していません。
-同日時点の検証用回答は1件です。
+同日時点の検証用回答1件を削除operatorで処理し、完了メールの送受信と通知済み記録を確認しました。
 backendには確認コードそのものと完了連絡先メールアドレスを保存せず、確認コードのhash、Firebase UIDのhash、処理状態、処理時刻、完了連絡の記録時刻、安全な固定failure codeだけを処理台帳へ保存します。
 完了メールには、確認コード、Firebase UID、backend内ユーザーID、Apple Account情報を含めません。
 
@@ -138,7 +142,8 @@ Google Formsでは、権限を限定したApps Scriptが保持処理と26時間�
 確認手順と結果は[#150](https://github.com/shunki-235/CPA-Short-Answer-Exam/issues/150)で記録しています。
 
 アカウント削除依頼フォーム用のApps Scriptは、実フォームでOAuth許可、preview、本実行、安全な実行履歴、成功鮮度監視、二つの日次triggerまで確認済みです。
-一時copyによる期限超過回答の削除、再実行、連携Sheet検出時の停止と復旧は未完了です。
+一時copyの非個人情報回答を使い、期限超過回答1件の削除、再実行0件、連携Sheet検出時の安全な停止と回答保持、連携解除後の削除を確認しました。
+検証後は一時フォームとSheetをGoogle Driveのゴミ箱へ移動しました。
 
 ## 共有と販売
 
@@ -162,6 +167,6 @@ https://shunki-235.github.io/cpa-short-answer-support/
 公開Issueには、Firebase UIDを含む個人情報や機微な情報を書き込まないでください。
 公開IssueではFirebaseアカウントの削除依頼を受け付けません。
 TestFlight beta参加者には、対象buildのアプリ内からだけ非公開の削除依頼フォームを案内します。
-[PR #149](https://github.com/shunki-235/CPA-Short-Answer-Exam/pull/149)以降にbackendへ接続するbuildを追加配布する前に、同フォームの保持処理、対象アカウントの削除、完了連絡、未解決alertの実着信を確認します。
+2026-07-29に、検証済みの削除受付と運用手順を[公開サポートPR #8](https://github.com/shunki-235/cpa-short-answer-support/pull/8)で公開ページへ同期しました。
 このbeta向け運用はOPENの[#152](https://github.com/shunki-235/CPA-Short-Answer-Exam/issues/152)で扱い、[#150](https://github.com/shunki-235/CPA-Short-Answer-Exam/issues/150)の定期保持処理とは別に確認します。
 一般App Store公開前のアプリ内削除開始導線、関連データ削除、Apple連携済みの場合のtoken失効処理は、OPENの[#51](https://github.com/shunki-235/CPA-Short-Answer-Exam/issues/51)で扱います。
