@@ -168,5 +168,5 @@ https://shunki-235.github.io/cpa-short-answer-support/
 公開IssueではFirebaseアカウントの削除依頼を受け付けません。
 TestFlight beta参加者には、対象buildのアプリ内からだけ非公開の削除依頼フォームを案内します。
 2026-07-29に、検証済みの削除受付と運用手順を[公開サポートPR #8](https://github.com/shunki-235/cpa-short-answer-support/pull/8)で公開ページへ同期しました。
-このbeta向け運用はOPENの[#152](https://github.com/shunki-235/CPA-Short-Answer-Exam/issues/152)で扱い、[#150](https://github.com/shunki-235/CPA-Short-Answer-Exam/issues/150)の定期保持処理とは別に確認します。
+このbeta向け運用は[#152](https://github.com/shunki-235/CPA-Short-Answer-Exam/issues/152)で確認し、[#150](https://github.com/shunki-235/CPA-Short-Answer-Exam/issues/150)の定期保持処理とは別に運用します。
 一般App Store公開前のアプリ内削除開始導線、関連データ削除、Apple連携済みの場合のtoken失効処理は、OPENの[#51](https://github.com/shunki-235/CPA-Short-Answer-Exam/issues/51)で扱います。
