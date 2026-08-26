@@ -15,15 +15,20 @@ permalink: /
 
 公開Issueには、氏名、メールアドレス、Firebase anonymous UID、質問内容などの個人情報や機微な情報を書き込まないでください。
 
-## TestFlight betaのアカウント削除
+## アカウント削除
 
-Firebaseアカウントとbackend上の関連データの削除を希望するTestFlight beta参加者は、この導線を設定した対象buildの配布後、アプリの「TestFlight アカウント削除」から表示される非公開フォームを利用してください。
+自己完結削除を有効にしたbuildでは、アプリ内の「アカウントを削除」からFirebaseアカウント、backend上の関連データ、RevenueCat customerの削除を開始できます。
+匿名利用者は確認画面から開始でき、Apple連携済み利用者は同じApple Accountで再認証してから開始します。
+処理が途中で止まった場合は、アプリに保存した期限付きreceiptから状態確認を再開できます。
+完了後は、アプリが端末内の回答履歴、復習予定、未送信の誤植報告、認証sessionを削除します。
+
+アカウント削除はApp Storeのサブスクリプション解約ではありません。
+有効な契約は、Apple Accountのサブスクリプション管理画面から別に解約してください。
+
+自己完結削除を持たない初期TestFlight buildでは、アプリの「TestFlight アカウント削除」から表示される非公開フォームを利用してください。
 
 公開Issueではアカウント削除依頼を受け付けません。
-公開Issueには、Firebase UID、ID token、Apple Account情報、メールアドレスなどの識別情報や認証情報を書き込まないでください。
-
-削除処理、完了メール、24時間以上未解決の依頼を知らせる通知、フォーム回答の保持処理は、staging環境で検証済みです。
-この導線を設定したTestFlight buildの追加配布はまだ行っていません。
+公開Issueには、Firebase UID、ID token、削除receipt、Apple Account情報、メールアドレスなどの識別情報や認証情報を書き込まないでください。
 
 ## プライバシー
 
