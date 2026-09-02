@@ -28,6 +28,8 @@ AI Tutorの回答は、問題本文、選択肢、監修済み解説、登録済
 
 購入、更新、請求、キャンセル、返金はAppleのルールと手続に従います。購入した利用権限は同じApple Accountで復元できますが、学習履歴は端末内保存のため復元されません。
 
+販売事業者、価格、支払時期、提供時期、キャンセル等の表示は、[特定商取引法に基づく表示](../commercial-transactions/)を確認してください。
+
 ## AI Tutorとサービスの適正利用
 
 次の行為を禁止します。
@@ -42,4 +44,4 @@ AI Tutorの回答は、問題本文、選択肢、監修済み解説、登録済
 
 ## プライバシーと問い合わせ
 
-情報の取扱いと保持期間は、[プライバシーポリシー](../privacy/)を確認してください。一般的な問い合わせと不具合報告は、[公開サポートページ](https://shunki-235.github.io/cpa-short-answer-support/)を利用してください。公開Issueに個人情報、識別情報、認証情報を書き込まないでください。
+情報の取扱いと保持期間は、[プライバシーポリシー](../privacy/)を確認してください。一般的な問い合わせと不具合報告は、[公開サポートページ](https://shunki-235.github.io/cpa-short-answer-support/)を利用してください。公開Issueに個人情報、識別情報、認証情報を書き込まないでください。販売事業者の住所・電話番号の開示請求は、[専用の非公開フォーム](https://docs.google.com/forms/d/e/1FAIpQLSe3DAz-qum_d3GEexMWRdfMlDbN7iiAR3qFUnB8uYHxxcjSZg/viewform)を利用してください。

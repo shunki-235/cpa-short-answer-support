@@ -37,6 +37,7 @@ permalink: /
 ## 利用条件
 
 - [サービス利用条件と購入条件](./terms/)
+- [特定商取引法に基づく表示](./commercial-transactions/)
 - [Apple標準使用許諾契約](https://www.apple.com/legal/internet-services/itunes/dev/stdeula/)
 
 ## 運営者

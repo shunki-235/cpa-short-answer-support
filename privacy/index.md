@@ -22,6 +22,7 @@ permalink: /privacy/
 | RevenueCatの不透明なApp User ID、SDK技術情報、購入履歴、利用権限 | Apple、RevenueCat、backend | 購入確認、利用権限判定、復元、返金・失効の反映、重複処理防止、問い合わせ対応 |
 | 自己完結削除のreceiptと削除処理台帳、削除tombstone | 端末内、backend | 削除状態の再開、失敗からの復旧、削除済みidentityの再接続防止。識別子は用途を分離したhashで保存する |
 | TestFlight betaの任意フィードバックと旧削除依頼フォーム | Google Forms、運用者のメールprovider | beta品質確認、自己完結削除を持たない旧buildの削除依頼と完了連絡 |
+| 特定商取引法に基づく表示の開示請求 | Google Forms、運用者のメールprovider | 返信先メールアドレスを使い、販売事業者の住所・電話番号を請求者へ個別に開示する |
 
 Sign in with Appleでは氏名とメールアドレスのscopeを要求せず、アプリ独自のDBへ保存しません。アプリ本体には、氏名、メールアドレス、電話番号、住所、位置情報、連絡先、写真、カレンダー、カード番号の入力欄はありません。決済credentialはAppleが取り扱い、本アプリのbackendには提供されません。
 
@@ -38,7 +39,7 @@ RevenueCat SDKは、自動device identifier収集とdiagnosticsを無効化し�
 | Google Cloud Run / Cloud SQL | backend API、監査ログ、rate limit、誤植報告、課金情報、削除処理台帳の保存と処理 |
 | LLM provider API | AI Tutorの回答生成。質問文、学習状態、問題本文、正誤を含む選択肢、解説、出典情報を送信する |
 | RevenueCat | App Store購入の検証、購入状態と利用権限の管理、復元、返金、customer削除 |
-| Google Forms / Gmail | betaフィードバック、自己完結削除を持たない旧TestFlight buildの削除依頼と完了連絡 |
+| Google Forms / Gmail | betaフィードバック、自己完結削除を持たない旧TestFlight buildの削除依頼、特定商取引法上の住所・電話番号の開示請求と返信 |
 | TestFlight / App Store Connect | beta配布、App Store配布、購入と返金の処理 |
 
 LLM provider API key、database接続情報、backend secretはモバイルアプリに含めません。第三者の取扱いは各提供者の規約とポリシーにも従います。[Firebaseのプライバシー情報](https://firebase.google.com/support/privacy/)、[RevenueCat Privacy Policy](https://www.revenuecat.com/privacy/)も確認してください。
@@ -52,6 +53,7 @@ LLM provider API key、database接続情報、backend secretはモバイルア�
 | AI Tutorの日次利用カウンター | UTCの利用日 | 31日後の次の日次処理でrecord全体を削除する |
 | backendへ送信した誤植報告 | backendの受信日時 | 180日後の次の日次処理でrecord全体を削除する |
 | Google Formsのbetaフィードバックと削除依頼、送信済みの削除完了メール | 送信日時 | 180日後に削除する |
+| 特定商取引法の開示請求フォーム回答と返信メール | フォームまたはメールの送信日時 | 180日以内に削除する |
 | 削除処理台帳と識別子のhash tombstone | 未開始は作成日時、完了は完了または完了連絡の記録日時 | 181日後の次の日次処理で削除する。未完了の`processing`または`failed`はrecordは復旧完了まで保持する |
 | 自己完結削除のraw receipt | 発行日時 | 30日で失効し、完了または失効の確認後に端末から削除する |
 | RevenueCat mapping、backendの課金record、RevenueCat customerと購入履歴 | アカウントと取引の存続中 | 購入確認と復元に必要な範囲で保持する。アカウント削除時はRevenueCat customerの削除確認後に関連mappingと利用者に紐付くrecordを削除する。法令上必要な取引記録とbackupには各提供者の保持規則が適用される |
@@ -87,3 +89,5 @@ App Store Connectでは、アプリ本体と第三者SDKを合わせ、次の6�
 Sign in with Appleを行わずに、無料の問題演習、回答履歴、復習キューを利用できます。AI Tutorと誤植報告の利用は任意です。
 
 一般的な問い合わせと不具合報告は、[公開サポートページ](https://shunki-235.github.io/cpa-short-answer-support/)から連絡してください。公開Issueには、Firebase UID、ID token、削除receipt、Apple Account情報、メールアドレスなどの個人情報、識別情報、認証情報を書き込まないでください。アカウント削除はアプリ内の専用導線を利用してください。
+
+販売事業者の住所・電話番号の開示請求は、[特定商取引法に基づく表示](../commercial-transactions/)から専用フォームを利用してください。フォームは返信先メールアドレスだけを必須とし、GoogleへのログインやGoogle Accountの共有を必須にしません。回答はGoogle Formsのresponse storeだけに保存し、Google Sheetsへ連携しません。
