@@ -34,6 +34,11 @@ permalink: /
 
 - [プライバシーポリシー](./privacy/)
 
+## 利用条件
+
+- [サービス利用条件と購入条件](./terms/)
+- [Apple標準使用許諾契約](https://www.apple.com/legal/internet-services/itunes/dev/stdeula/)
+
 ## 運営者
 
 Shunki Tokuchi
