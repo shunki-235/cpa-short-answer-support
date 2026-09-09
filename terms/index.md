@@ -1,12 +1,12 @@
 ---
 layout: page
-title: CPA短答トレーナー サービス利用条件
+title: 公認会計士 短答トレーナー サービス利用条件
 permalink: /terms/
 ---
 
 最終更新日: 2026-09-02
 
-このページは、CPA短答トレーナー固有の機能と購入条件を説明します。アプリの利用許諾にはAppleの[標準使用許諾契約](https://www.apple.com/legal/internet-services/itunes/dev/stdeula/)が適用されます。このページは独自EULAではありません。
+このページは、公認会計士 短答トレーナー固有の機能と購入条件を説明します。アプリの利用許諾にはAppleの[標準使用許諾契約](https://www.apple.com/legal/internet-services/itunes/dev/stdeula/)が適用されます。このページは独自EULAではありません。
 
 ## サービスの性質
 
