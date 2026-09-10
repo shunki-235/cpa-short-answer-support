@@ -14,8 +14,8 @@ permalink: /privacy/
 |---|---|---|
 | Firebase UID、backend内部の利用者ID | Firebase、backend | 認証、AI Tutorの利用回数制限、濫用防止、誤植報告、アカウント削除 |
 | Apple Accountの認証識別子 | Apple、Firebase | 購入前の本人確認、再インストール後のアカウントと購入権利の復旧、削除時の再認証とtoken失効 |
-| IPアドレス、user agent | Firebase Authentication、Cloud Run、backend | 認証要求の処理とセキュリティ保護。backendの短時間制限に用いる情報はDBへ保存しない |
-| 短時間の利用回数制限用の識別子と回数 | backendの短時間メモリ | 濫用防止。利用者IDをサーバー起動ごとの鍵で変換した識別子を使い、このカウンターには元の利用者ID、認証token、IPアドレス、質問・報告本文を保持しない |
+| IPアドレス、user agent | Firebase Authentication、Cloud Run、backend | 認証要求の処理とセキュリティ保護。下記の利用者ID由来のカウンターには、入力としても保存情報としても使わない |
+| 短時間の利用回数制限用の識別子と回数 | backendの短時間メモリ | 濫用防止。利用者IDをサーバー起動ごとの鍵で変換した識別子を使い、このカウンターには元の利用者ID、認証token、IPアドレス、user agent、質問・報告本文を保持しない |
 | AI Tutorへの質問文、回答、引用、問題ID、content version、監修状態、参照元ID | backend、LLM provider API | 回答生成、品質確認、誤回答と問い合わせの調査 |
 | AI Tutorのrequest ID、mode、status、provider、model、prompt template version、guardrail結果、latency、token usage、認可時点のplanと購入環境、日次利用回数 | backend | 障害調査、費用監視、品質改善、利用回数制限、濫用防止。購入環境は`production`、`sandbox`、`unknown`のいずれか |
 | 回答履歴、復習予定、自信度、理由タグ、利用event | 端末内 | 学習画面と復習キューの表示、アプリ内の利用状況の記録。利用eventは外部analyticsサービスへ送信しない |
