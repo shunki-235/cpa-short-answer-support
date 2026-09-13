@@ -4,7 +4,7 @@ title: 公認会計士 短答トレーナー プライバシーポリシー
 permalink: /privacy/
 ---
 
-最終更新日: 2026-09-10
+最終更新日: 2026-09-13
 
 このプライバシーポリシーは、公認会計士 短答トレーナーのApp Store版とTestFlight版に適用します。本アプリは、公認会計士試験・短答式試験の学習支援を目的とする非公式アプリです。試験実施機関または関係団体が提供、承認、監修する公式アプリではありません。
 
@@ -76,7 +76,9 @@ LLM provider API key、database接続情報、backend secretはモバイルア�
 
 ## アカウント削除
 
-現行buildでは、アプリ内の「アカウントを削除」から開始できます。匿名利用者は確認画面から、Apple連携済み利用者は同じApple Accountで再認証してから開始します。Apple連携済みの場合はApple tokenを失効し、RevenueCat customer、backendの利用者データ、Firebase Authenticationの利用者を削除します。完了後は端末内の関連データも削除します。
+現行buildでは、アプリ内の「アカウント削除」から開始できます。匿名利用者は確認画面から、Apple連携済み利用者は同じApple Accountで再認証してから開始します。Apple連携済みの場合はApple tokenを失効し、RevenueCat customer、backendの利用者データ、Firebase Authenticationの利用者を削除します。完了後は端末内の学習履歴、未送信の誤植報告、利用状況の記録も削除します。
+
+アプリの削除画面では、これらを利用者向けの言葉で表記します。「Apple連携」はApple tokenの失効、「購入情報」はRevenueCat customer、「サーバー上のデータ」はbackendの利用者データ、「ログイン情報」はFirebase Authenticationの利用者を指します。削除画面が「削除後も保持する記録」として示す「削除済みであることを示す記録」は、上の保存期間の表にある削除処理台帳と識別子のhash tombstoneです。同じアカウントの再作成と削除済みデータの復活を防ぐために保持し、識別子は元に戻せないhashだけを保存します。backupに残った削除済みrecordは、上の保存期間の表にあるbackupの保持期間で消えます。AI Tutorの回答生成のためにLLM provider APIへ送信済みの内容は、このアカウント削除の対象ではなく、上の第三者サービスの項のとおり提供元の規約とポリシーに従って取り扱われます。
 
 アカウント削除は、App Storeのサブスクリプション解約、Apple Accountの削除、Appleが保持する取引記録の削除ではありません。有効な月額契約は、Apple Accountのサブスクリプション管理画面から別に解約してください。
 
