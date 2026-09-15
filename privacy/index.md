@@ -18,7 +18,7 @@ permalink: /privacy/
 | 短時間の利用回数制限用の識別子と回数 | backendの短時間メモリ | 濫用防止。利用者IDをサーバー起動ごとの鍵で変換した識別子を使い、このカウンターには元の利用者ID、認証token、IPアドレス、user agent、質問・報告本文を保持しない |
 | AI Tutorへの質問文、回答、引用、問題ID、content version、監修状態、参照元ID | backend、LLM provider API | 回答生成、品質確認、誤回答と問い合わせの調査 |
 | AI Tutorのrequest ID、mode、status、provider、model、prompt template version、guardrail結果、latency、token usage、認可時点のplanと購入環境、日次利用回数 | backend | 障害調査、費用監視、品質改善、利用回数制限、濫用防止。購入環境は`production`、`sandbox`、`unknown`のいずれか |
-| 回答履歴、復習予定、自信度、理由タグ、利用event | 端末内 | 学習画面と復習キューの表示、アプリ内の利用状況の記録。利用eventは外部analyticsサービスへ送信しない |
+| 回答履歴、復習予定、自信度、理由タグ、利用event | 端末内 | 学習画面と今日の復習の表示、アプリ内の利用状況の記録。利用eventは外部analyticsサービスへ送信しない |
 | 誤植報告 | 端末内、backend | 対象箇所、対象テキスト、任意のコメントを問題品質の改善に使う |
 | RevenueCatの不透明なApp User ID、SDK技術情報、購入履歴、利用権限 | Apple、RevenueCat、backend | 購入確認、利用権限判定、復元、返金・失効の反映、重複処理防止、問い合わせ対応 |
 | 自己完結削除のreceiptと削除処理台帳、削除tombstone | 端末内、backend | 削除状態の再開、失敗からの復旧、削除済みidentityの再接続防止。識別子は用途を分離したhashで保存する |
@@ -101,7 +101,7 @@ App Store Connectでは、アプリ本体と第三者SDKを合わせ、次の6�
 
 ## 利用者の選択と問い合わせ
 
-Sign in with Appleを行わずに、無料の問題演習、回答履歴、復習キューを利用できます。AI Tutorと誤植報告の利用は任意です。
+Sign in with Appleを行わずに、無料の問題演習、回答履歴、今日の復習を利用できます。AI Tutorと誤植報告の利用は任意です。
 
 一般的な問い合わせと不具合報告は、[公開サポートページ](https://shunki-235.github.io/cpa-short-answer-support/)から連絡してください。公開Issueには、Firebase UID、ID token、削除receipt、Apple Account情報、メールアドレスなどの個人情報、識別情報、認証情報を書き込まないでください。アカウント削除はアプリ内の専用導線を利用してください。
 
