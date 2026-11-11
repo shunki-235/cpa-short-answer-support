@@ -2,6 +2,7 @@
 layout: page
 title: 特定商取引法に基づく表示
 permalink: /commercial-transactions/
+eyebrow: 公認会計士 短答トレーナー
 ---
 
 最終更新日: 2026-09-02

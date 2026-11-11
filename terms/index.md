@@ -2,6 +2,8 @@
 layout: page
 title: 公認会計士 短答トレーナー サービス利用条件
 permalink: /terms/
+heading: サービス利用条件
+eyebrow: 公認会計士 短答トレーナー
 ---
 
 最終更新日: 2026-09-13
