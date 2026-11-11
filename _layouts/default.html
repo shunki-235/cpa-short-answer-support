@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="{{ site.lang | default: 'ja' }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>{% if page.url == "/" %}{{ site.title }}{% else %}{{ page.title }} | {{ site.title }}{% endif %}</title>
+  <meta name="description" content="{{ page.description | default: site.description }}">
+  <link rel="icon" type="image/png" href="{{ '/assets/img/app-icon-180.png' | relative_url }}">
+  <link rel="apple-touch-icon" href="{{ '/assets/img/app-icon-180.png' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/assets/css/site.css' | relative_url }}">
+</head>
+<body>
+  <a class="skip-link" href="#main">本文へ移動</a>
+
+  {%- assign nav = "/|サポート;/privacy/|プライバシーポリシー;/terms/|利用条件;/commercial-transactions/|特定商取引法に基づく表示" | split: ";" -%}
+
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="brand" href="{{ '/' | relative_url }}">
+        <img class="brand__icon" src="{{ '/assets/img/app-icon-180.png' | relative_url }}" alt="" width="36" height="36">
+        <span class="brand__text">
+          <span class="brand__name">公認会計士 短答トレーナー</span>
+          <span class="brand__sub">サポート</span>
+        </span>
+      </a>
+      <nav class="site-nav" aria-label="サイト内">
+        <ul>
+          {%- for entry in nav -%}
+            {%- assign parts = entry | split: "|" -%}
+            <li><a href="{{ parts[0] | relative_url }}"{% if page.url == parts[0] %} aria-current="page"{% endif %}>{{ parts[1] }}</a></li>
+          {%- endfor -%}
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="site-main">
+    {{ content }}
+  </main>
+
+  <footer class="site-footer">
+    <div class="site-footer__inner">
+      <ul class="footer-links">
+        {%- for entry in nav -%}
+          {%- assign parts = entry | split: "|" -%}
+          <li><a href="{{ parts[0] | relative_url }}">{{ parts[1] }}</a></li>
+        {%- endfor -%}
+      </ul>
+      <p>公認会計士 短答トレーナーは、公認会計士試験・短答式試験の学習を支援する非公式アプリです。</p>
+      <p>運営者: Shunki Tokuchi</p>
+    </div>
+  </footer>
+
+  <script>
+    // 狭い画面で表をカード表示にするため、各セルに列見出しを data-label として付ける。
+    // JavaScript が動かない場合は、表は横スクロールで表示される。
+    document.querySelectorAll(".page-content table").forEach(function (table) {
+      var heads = Array.prototype.map.call(table.querySelectorAll("thead th"), function (th) {
+        return th.textContent.trim();
+      });
+      if (heads.length === 0) return;
+      table.classList.add("is-stackable");
+      table.querySelectorAll("tbody tr").forEach(function (row) {
+        Array.prototype.forEach.call(row.children, function (cell, index) {
+          cell.setAttribute("data-label", heads[index] || "");
+        });
+      });
+    });
+  </script>
+</body>
+</html>
