@@ -5,22 +5,10 @@
 
 :root {
   --bg: #f8f7f3;
-  --surface: #ffffff;
-  --surface-muted: #f1f3f1;
   --text: #18202a;
   --text-muted: #56616a;
   --border: #dde3df;
-  --border-strong: #c7ccc9;
   --primary: #21486b;
-  --primary-soft: #dce8f3;
-  --on-primary-soft: #102a40;
-  --secondary: #326f73;
-  --secondary-soft: #dcecec;
-  --on-secondary-soft: #10383a;
-  --caution: #725700;
-  --caution-soft: #f6e5b5;
-  --on-caution-soft: #3b2b00;
-  --radius: 12px;
   --content-width: 46rem;
   --font-sans: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Hiragino Kaku Gothic ProN",
     "Noto Sans JP", "Yu Gothic UI", "Yu Gothic", Meiryo, sans-serif;
@@ -29,21 +17,10 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --bg: #111820;
-    --surface: #17212a;
-    --surface-muted: #1d2932;
     --text: #e7eaef;
     --text-muted: #a7b1ba;
     --border: #2d3a44;
-    --border-strong: #3c4852;
     --primary: #aac9e4;
-    --primary-soft: #1f3a52;
-    --on-primary-soft: #d8e9f5;
-    --secondary: #84c1c3;
-    --secondary-soft: #1b3639;
-    --on-secondary-soft: #bcebed;
-    --caution: #e3c46d;
-    --caution-soft: #362d10;
-    --on-caution-soft: #f4d986;
   }
 }
 
@@ -99,7 +76,7 @@ summary:focus-visible {
   top: -3rem;
   z-index: 10;
   padding: 0.5rem 1rem;
-  border-radius: var(--radius);
+  border-radius: 4px;
   background: var(--primary);
   color: var(--bg);
 }
@@ -111,7 +88,6 @@ summary:focus-visible {
 /* ヘッダー */
 
 .site-header {
-  background: var(--surface);
   border-bottom: 1px solid var(--border);
 }
 
@@ -181,7 +157,7 @@ summary:focus-visible {
 .site-nav a {
   display: block;
   padding: 0.5rem 0.5rem 0.625rem;
-  border-bottom: 3px solid transparent;
+  border-bottom: 2px solid transparent;
   color: var(--text-muted);
   font-size: 0.875rem;
   white-space: nowrap;
@@ -220,9 +196,8 @@ summary:focus-visible {
 
 .page-header__eyebrow {
   margin: 0 0 0.25rem;
-  color: var(--secondary);
+  color: var(--text-muted);
   font-size: 0.875rem;
-  font-weight: 700;
 }
 
 h1,
@@ -240,15 +215,14 @@ h1 {
   font-size: clamp(1.625rem, 4vw, 2.125rem);
 }
 
+
 h2 {
-  margin: 3rem 0 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid var(--border);
+  margin: 3.5rem 0 1rem;
   font-size: 1.375rem;
 }
 
 h3 {
-  margin: 2rem 0 0.75rem;
+  margin: 2.25rem 0 0.75rem;
   font-size: 1.125rem;
 }
 
@@ -275,19 +249,12 @@ li + li {
 }
 
 .page-updated {
-  display: inline-block;
   margin-bottom: 1.5rem;
-  padding: 0.125rem 0.75rem;
-  border-radius: 999px;
-  background: var(--surface-muted);
   color: var(--text-muted);
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
 }
 
 code {
-  padding: 0.1em 0.4em;
-  border-radius: 6px;
-  background: var(--surface-muted);
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 0.875em;
 }
@@ -296,19 +263,14 @@ strong {
   font-weight: 700;
 }
 
-/* 表 */
+/* 表: 囲み線や背景を付けず、行の間の細い罫線だけで区切る */
 
 table {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface);
+  border-collapse: collapse;
   font-size: 0.9375rem;
   line-height: 1.7;
   table-layout: fixed;
-  overflow: hidden;
 }
 
 /* 列幅を表どうしで揃える。2列の表は 30% / 70%、3列の表は 30% / 25% / 45% */
@@ -322,21 +284,17 @@ th:nth-child(2):not(:last-child) {
 
 th,
 td {
-  padding: 0.75rem 0.875rem;
+  padding: 0.625rem 1rem 0.625rem 0;
+  border-bottom: 1px solid var(--border);
   text-align: left;
   vertical-align: top;
 }
 
 th {
-  background: var(--surface-muted);
   color: var(--text-muted);
   font-size: 0.8125rem;
   font-weight: 700;
   white-space: nowrap;
-}
-
-tbody tr + tr td {
-  border-top: 1px solid var(--border);
 }
 
 @media (max-width: 40rem) {
@@ -353,13 +311,6 @@ tbody tr + tr td {
     display: block;
   }
 
-  table.is-stackable {
-    border: 0;
-    border-radius: 0;
-    background: transparent;
-    overflow: visible;
-  }
-
   table.is-stackable thead {
     position: absolute;
     width: 1px;
@@ -370,11 +321,8 @@ tbody tr + tr td {
   }
 
   table.is-stackable tr {
-    margin-bottom: 0.75rem;
-    padding: 0.875rem 1rem;
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    background: var(--surface);
+    padding: 0.875rem 0;
+    border-bottom: 1px solid var(--border);
   }
 
   table.is-stackable td {
@@ -386,55 +334,32 @@ tbody tr + tr td {
     font-weight: 700;
   }
 
-  table.is-stackable tbody tr + tr td {
-    border-top: 0;
-  }
-
   table.is-stackable td + td {
-    margin-top: 0.5rem;
+    margin-top: 0.375rem;
   }
 
   table.is-stackable td + td::before {
-    content: attr(data-label);
-    display: block;
+    content: attr(data-label) "：";
     color: var(--text-muted);
-    font-size: 0.75rem;
-    font-weight: 700;
+    font-size: 0.8125rem;
   }
 }
 
 /* 折りたたみ */
 
-details {
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface);
-}
-
 summary {
-  padding: 0.75rem 1rem;
   cursor: pointer;
-  font-weight: 700;
+  color: var(--primary);
 }
 
 details[open] summary {
-  border-bottom: 1px solid var(--border);
-}
-
-details > :not(summary) {
-  margin-left: 1rem;
-  margin-right: 1rem;
-}
-
-details > :nth-child(2) {
-  margin-top: 0.75rem;
+  margin-bottom: 0.5rem;
 }
 
 /* フッター */
 
 .site-footer {
   border-top: 1px solid var(--border);
-  background: var(--surface);
   color: var(--text-muted);
   font-size: 0.8125rem;
 }
@@ -465,95 +390,22 @@ details > :nth-child(2) {
   color: var(--text-muted);
 }
 
-/* プライバシーポリシーの部品 */
-
-.policy .page-content {
-  counter-reset: section;
-}
-
-.policy h2 {
-  display: flex;
-  align-items: baseline;
-  gap: 0.625rem;
-}
-
-.policy h2::before {
-  counter-increment: section;
-  content: counter(section);
-  display: inline-grid;
-  place-items: center;
-  flex: none;
-  width: 1.75rem;
-  height: 1.75rem;
-  border-radius: 8px;
-  background: var(--primary);
-  color: var(--bg);
-  font-size: 0.9375rem;
-  transform: translateY(-0.1em);
-}
-
-/* 要点 */
-
-.summary {
-  margin: 0 0 2rem;
-  padding: 1.25rem;
-  border-radius: calc(var(--radius) + 4px);
-  background: var(--primary-soft);
-  color: var(--on-primary-soft);
-}
+/* プライバシーポリシーの要点・目次・注記は、囲みを付けず本文と同じ組み方にする */
 
 .summary h2 {
-  margin: 0 0 1rem;
-  padding: 0;
-  border: 0;
-  font-size: 1.125rem;
+  margin-top: 2rem;
 }
 
-.policy .summary h2::before {
-  content: none;
-  counter-increment: none;
+.summary li + li {
+  margin-top: 0.5rem;
 }
-
-.summary ul {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
-  gap: 0.75rem;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.summary li {
-  margin: 0;
-  padding: 0.875rem 1rem;
-  border-radius: var(--radius);
-  background: var(--surface);
-  color: var(--text);
-  font-size: 0.9375rem;
-  line-height: 1.75;
-}
-
-.summary li strong {
-  display: block;
-  word-break: auto-phrase;
-  margin-bottom: 0.25rem;
-  color: var(--primary);
-}
-
-/* 目次 */
 
 .toc {
-  margin: 0 0 2rem;
-  padding: 1rem 1.25rem;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--surface);
+  margin: 2rem 0 0;
 }
 
 .toc p {
-  margin: 0 0 0.5rem;
-  color: var(--text-muted);
-  font-size: 0.8125rem;
+  margin: 0 0 0.25rem;
   font-weight: 700;
 }
 
@@ -561,8 +413,6 @@ details > :nth-child(2) {
   columns: 2 14rem;
   column-gap: 2rem;
   margin: 0;
-  padding-left: 1.25rem;
-  font-size: 0.9375rem;
 }
 
 .toc li {
@@ -573,26 +423,9 @@ details > :nth-child(2) {
   margin-top: 0;
 }
 
-/* 注記 */
-
 .note,
 .caution {
-  margin: 1.25rem 0;
-  padding: 1rem 1.25rem;
-  border-radius: var(--radius);
-  border-left: 4px solid;
-}
-
-.note {
-  border-color: var(--secondary);
-  background: var(--secondary-soft);
-  color: var(--on-secondary-soft);
-}
-
-.caution {
-  border-color: var(--caution);
-  background: var(--caution-soft);
-  color: var(--on-caution-soft);
+  margin: 1.5rem 0;
 }
 
 .note > :last-child,
@@ -600,14 +433,7 @@ details > :nth-child(2) {
   margin-bottom: 0;
 }
 
-.note p:first-child strong:only-child,
-.caution p:first-child strong:only-child {
-  display: block;
-  word-break: auto-phrase;
-  font-size: 0.9375rem;
-}
-
-.note a,
-.caution a {
-  color: inherit;
+.note p:first-child,
+.caution p:first-child {
+  margin-bottom: 0.25rem;
 }
