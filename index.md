@@ -44,4 +44,4 @@ eyebrow: 公認会計士 短答トレーナー
 
 ## 運営者
 
-Shunki Tokuchi
+合同会社ＳＴ（ST, LIMITED LIABILITY COMPANY）
