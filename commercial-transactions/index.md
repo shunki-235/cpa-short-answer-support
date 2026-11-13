@@ -5,11 +5,15 @@ permalink: /commercial-transactions/
 eyebrow: 公認会計士 短答トレーナー
 ---
 
-最終更新日: 2026-09-02
+最終更新日: 2026-11-13
 
 ## 販売事業者
 
-Shunki Tokuchi
+合同会社ＳＴ（ST, LIMITED LIABILITY COMPANY）
+
+## 代表者
+
+代表社員 得地 俊喜
 
 ## 住所・電話番号
 
